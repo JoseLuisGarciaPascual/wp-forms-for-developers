@@ -1,5 +1,5 @@
 <?php 
-
+require_once("/bbdd.php");
 class Submit_List_Table{
     
     /**
@@ -22,6 +22,7 @@ class Submit_List_Table{
         }
         /* -- Fetch the items -- */
         $this->items = $wpdb->get_results($query);
+        $this->id = $form_id;
     }
     
     function display_submit_list(){
@@ -102,8 +103,20 @@ class Submit_List_Table{
 	function single_row_columns( $item ) {
         
         echo '<tr>';
-        $values = json_decode($item->values);
-        Foreach ($values as $value){
+        $values = get_object_vars(json_decode($item->values));
+        $BBDD_headers = ffd_get_headers($this->id);
+        $headers = get_object_vars(json_decode($BBDD_headers[0]->fields));
+        $final_values = array();
+        
+        foreach ($values as $k => $data){
+            if(empty($headers[$k])) unset($values[$k]);
+        }
+        
+        foreach ($headers as $k => $data){
+            if(empty($values[$k])) $values[$k] = '';
+        }
+        
+        foreach ($values as $value){
             echo '<td>' . $value . '</td>';
         }
         echo '<td>' . date('Y-m-d', strtotime($item->submit_date)) . '</td>';

@@ -56,6 +56,21 @@ function ffd_form_create ($formName, $formFields, $formResponse) {
     );
 }
 
+function ffd_form_update ($formID, $formFields, $formResponse) {
+    global $wpdb;
+    
+    $forms_table = $wpdb->prefix . 'ffd_forms';
+    
+    return $wpdb->update( 
+        $forms_table, 
+        array( 
+            'fields' => $formFields,
+            'response' => $formResponse
+        ),
+        array( 'id' => $formID ) 
+    );
+}
+
 function ffd_get_form ( $form_id ){
     global $wpdb;
     
